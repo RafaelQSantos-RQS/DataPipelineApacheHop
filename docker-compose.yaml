@@ -1,0 +1,38 @@
+services:
+  database:
+    image: pgvector/pgvector:${PGVECTOR_TAG:-latest}
+    container_name: pgvector
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-erro_senha_obrigatoria}
+      POSTGRES_DB: ${POSTGRES_DB:-BD_PESQUISADOR}
+    volumes:
+      - ./scripts/init.sh:/docker-entrypoint-initdb.d/init_db.sh:ro
+      - pgdata:/var/lib/postgresql
+    networks:
+      - data-pipeline-net
+
+  dataview:
+    image: metabase/metabase:${METABASE_TAG:-latest}
+    container_name: metabase
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - metabase_data:/metabase.db
+    depends_on:
+      - database
+    networks:
+      - data-pipeline-net
+
+networks:
+  data-pipeline-net:
+    name: data-pipeline-net
+    driver: bridge
+
+volumes:
+  pgdata:
+  metabase_data:
