@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-erro_senha_obrigatoria}
       POSTGRES_DB: ${POSTGRES_DB:-BD_PESQUISADOR}
     volumes:
-      - ./scripts/init.sh:/docker-entrypoint-initdb.d/init_db.sh:ro
+      - ./scripts/:/docker-entrypoint-initdb.d/:ro
       - pgdata:/var/lib/postgresql
     networks:
       - data-pipeline-net
@@ -22,7 +22,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - metabase_data:/metabase.db
+      - metabase-data:/metabase.db
     depends_on:
       - database
     networks:
@@ -35,4 +35,4 @@ networks:
 
 volumes:
   pgdata:
-  metabase_data:
+  metabase-data:
